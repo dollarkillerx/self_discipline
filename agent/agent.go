@@ -11,8 +11,9 @@ var serviceAddress = "127.0.0.1:8383"
 var gameNames = []string{"cs2.exe", "r5apex.exe", "steam.exe", "RainbowSix.exe"}
 
 func main() {
+	fmt.Println("Agent Start")
 	for {
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 5)
 
 		now := time.Now()
 
@@ -23,13 +24,13 @@ func main() {
 		sixOClock := oneOClock.Add(6 * time.Hour)
 		six12OClock := oneOClock.Add(12 * time.Hour)
 
-		fmt.Println(oneOClock.Unix())
-		fmt.Println(sixOClock.Unix())
-		fmt.Println(six12OClock.Unix())
+		//fmt.Println(oneOClock.Unix())
+		//fmt.Println(sixOClock.Unix())
+		//fmt.Println(six12OClock.Unix())
 
 		// 判断当前时间是否在 1 点到 6 点之间
 		if now.Unix() >= oneOClock.Unix() && now.Unix() <= sixOClock.Unix() {
-			fmt.Println("当前时间在 1 点到 6 点之间")
+			//fmt.Println("当前时间在 1 点到 6 点之间")
 			var ex bool
 			for _, v := range gameNames {
 				if found(v) {

@@ -35,8 +35,8 @@ func main() {
 			for _, v := range gameNames {
 				if found(v) {
 					Kill(v)
+					ex = true
 				}
-
 			}
 			if ex {
 				Shutdown()
@@ -48,8 +48,8 @@ func main() {
 			for _, v := range gameNames {
 				if found(v) {
 					Kill(v)
+					ex = true
 				}
-
 			}
 			if ex {
 				Shutdown()

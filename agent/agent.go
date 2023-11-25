@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"syscall"
 	"time"
 )
 
@@ -60,6 +61,9 @@ func main() {
 
 func found(processName string) bool {
 	cmd := exec.Command("taskkill", "/FI", fmt.Sprintf("IMAGENAME eq %s", processName))
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 	stdout, _ := cmd.Output()
 	if len(string(stdout)) == 40 {
 		return false
@@ -70,7 +74,11 @@ func found(processName string) bool {
 
 func Shutdown() {
 	// 立即关闭计算机
-	if err := exec.Command("cmd", "/C", "shutdown", "/s").Run(); err != nil {
+	cmd := exec.Command("cmd", "/C", "shutdown", "/s")
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
+	if err := cmd.Run(); err != nil {
 		fmt.Println("Failed to initiate shutdown:", err)
 	}
 }
@@ -78,7 +86,9 @@ func Shutdown() {
 func Kill(processName string) {
 	// 创建一个 *exec.Cmd 对象
 	cmd := exec.Command("taskkill", "/F", "/IM", processName)
-
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 	stdout, _ := cmd.Output()
 
 	fmt.Println(string(stdout))

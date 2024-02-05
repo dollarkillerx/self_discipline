@@ -2,17 +2,46 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"syscall"
 	"time"
+
+	"github.com/dollarkillerx/urllib"
 )
 
 var serviceAddress = "127.0.0.1:8383"
 
-var gameNames = []string{"cs2.exe", "r5apex.exe", "steam.exe", "RainbowSix.exe"}
+var gameNames = []string{"cs2.exe", "r5apex.exe", "steam.exe", "RainbowSix.exe", "r5apex_dx12.exe"}
+
+type TBS struct {
+	Stop bool `json:"stop"`
+}
 
 func main() {
 	fmt.Println("Agent Start")
+	os.WriteFile("agent.lock", []byte("1 2 3"), 0644)
+
+	go func() {
+		for {
+			time.Sleep(time.Second * 5)
+
+			uri := "http://192.227.234.228:8782/info"
+
+			var tbs TBS
+
+			err := urllib.Get(uri).FromJson(&tbs)
+			if err != nil {
+				time.Sleep(time.Second * 5)
+				continue
+			}
+
+			if tbs.Stop {
+				Shutdown()
+			}
+		}
+	}()
+
 	for {
 		time.Sleep(time.Second * 5)
 
@@ -23,15 +52,15 @@ func main() {
 
 		// 计算早上 6 点
 		sixOClock := oneOClock.Add(6 * time.Hour)
-		six12OClock := oneOClock.Add(12 * time.Hour)
+		six12OClock := oneOClock.Add(23 * time.Hour)
 
-		//fmt.Println(oneOClock.Unix())
-		//fmt.Println(sixOClock.Unix())
-		//fmt.Println(six12OClock.Unix())
+		fmt.Println(oneOClock.Unix())
+		fmt.Println(sixOClock.Unix())
+		fmt.Println(six12OClock.Unix())
 
 		// 判断当前时间是否在 1 点到 6 点之间
 		if now.Unix() >= oneOClock.Unix() && now.Unix() <= sixOClock.Unix() {
-			//fmt.Println("当前时间在 1 点到 6 点之间")
+			fmt.Println("当前时间在 1 点到 6 点之间")
 			var ex bool
 			for _, v := range gameNames {
 				if found(v) {
@@ -45,6 +74,8 @@ func main() {
 		}
 
 		if now.Unix() >= six12OClock.Unix() {
+			fmt.Println("当前时间在 12 点之间")
+
 			var ex bool
 			for _, v := range gameNames {
 				if found(v) {
